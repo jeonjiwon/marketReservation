@@ -1,0 +1,3 @@
+spring:
+  jwt:
+    secret: YmFja2VuZHNjaG9vbGplb25qaXdvbnN0dWR5aWNhbmRvaXRpbXVzdGRvaXRsaW1kYW9uaW1kYW9uaW1kYW9uZmlnaHRpbmd3ZWNhbmRvaXR3ZW11c3Rkb2l0Z29nb2dv
