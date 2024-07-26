@@ -11,6 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 public class MarketService {
@@ -44,10 +49,69 @@ public class MarketService {
         newMarket.setLocation(market.getLocation());
         newMarket.setDescription(market.getDescription());
         newMarket.setDeleteYn("N");
-        newMarket.setAdminId(member);
+        newMarket.setAdminId(member.getId());
+//        newMarket.setAdminId(member);
         marketRepository.save(newMarket);
         logger.info("end to create market");
 
+    }
+
+    @Transactional
+    public MarketEntity updateMarket(Market market) {
+        logger.info("started to update market");
+
+        // 새로 입력한 adminId 가 유효한 아이디인지 체크
+        MemberEntity member = memberRepository.findById(market.getAdminId())
+                .orElseThrow(()-> new RuntimeException("관리자 정보를 찾을 수 없습니다. "));
+
+        MarketEntity updateMarket = marketRepository.findById(market.getId())
+                .orElseThrow(()-> new RuntimeException("기존에 등록되지 않은 상점정보 입니다. "));
+        if("Y".equals(updateMarket.getDeleteYn())) {
+            throw new RuntimeException("삭제된 상점은 수정 불가능합니다. ");
+        }
+
+        updateMarket.setName(market.getName());
+        updateMarket.setLocation(market.getLocation());
+        updateMarket.setDescription(market.getDescription());
+        updateMarket.setAdminId(member.getId());
+//        updateMarket.setAdminId(member);
+        marketRepository.save(updateMarket);
+        logger.info("end to update market");
+
+        return updateMarket;
+    }
+
+    @Transactional
+    public MarketEntity deleteMarket(Long id) {
+        logger.info("started to delete market");
+        MarketEntity deleteMarket = marketRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("기존에 등록되지 않은 상점정보 입니다. "));
+        marketRepository.deleteById(deleteMarket.getId());
+        logger.info("end to delete market");
+        return deleteMarket;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MarketEntity> readMarket(String searchGubun){
+        List<MarketEntity> resultList = new ArrayList<>();
+        if("1".equals(searchGubun)) {
+            // 가나다 순 정렬
+            resultList = marketRepository.findAllByOrderByNameAsc();
+        } else if ("2".equals(searchGubun)) {
+            // 별점 순
+            resultList = marketRepository.findAllByOrderByRatingDesc();
+        } else {
+            // 거리순
+            resultList = marketRepository.findAllByOrderByLocationAsc();
+        }
+        return resultList;
+    }
+
+    @Transactional(readOnly = true)
+    public MarketEntity readMarketDtl(Long id) {
+        MarketEntity market = marketRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("해당 상점 정보를 조회할 수 없습니다."));
+        return market;
     }
 
 }

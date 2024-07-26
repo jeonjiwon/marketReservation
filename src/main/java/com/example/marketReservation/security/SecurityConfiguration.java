@@ -28,7 +28,10 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(authorizeRequestsConfigurer ->
                         authorizeRequestsConfigurer
-                                .requestMatchers("/auth/signup", "/auth/signin").permitAll()
+                                .requestMatchers(
+                                        "/auth/signup", "/auth/signin",
+                                        "/create/market","/update/market", "/delete/market", "/read/market", "/read/marketDetail"
+                                ).permitAll()
 //                                .requestMatchers("/**/signup", "/**/signin").permitAll()  // 회원가입 및 로그인 엔드포인트는 인증 없이 접근 허용
                                 .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
                 )
