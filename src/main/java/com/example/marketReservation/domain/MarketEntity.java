@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 @Getter
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity(name = "MARKET")
+@EntityListeners(AuditingEntityListener.class)
 public class MarketEntity {
 
     @Id
@@ -28,9 +30,13 @@ public class MarketEntity {
 
     private String deleteYn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adminId", nullable = false)
-    private MemberEntity adminId;
+    private Long rating;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "adminId", nullable = false)
+//    private MemberEntity adminId;
+
+    private Long adminId;
 
     @CreatedDate
     private LocalDateTime createdAt;
