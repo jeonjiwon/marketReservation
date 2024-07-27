@@ -1,40 +1,45 @@
 package com.example.marketReservation.domain;
 
+import com.example.marketReservation.type.ReservationState;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "MARKET")
+@Entity(name = "RESERVATION")
 @EntityListeners(AuditingEntityListener.class)
-public class MarketEntity {
+public class ReservationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //상점아이디
+    private Long id; //예약번호
 
     @Column(nullable = false)
-    private String name; //상점명
+    private LocalDateTime reservationDt; //예약시간
 
-    private String location; //위치
+    @Column(nullable = false)
+    private Long storeId; //예약매장
 
-    private String description; //설명
+    @Column(nullable = false)
+    private Long userId; //예약자
 
-    private Long rating; //상점 평균 별점
+    @Column(nullable = false)
+    private String phoneNumber; //예약자번호
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "adminId", nullable = false)
-//    private MemberEntity adminId;
+    @Column(nullable = false)
+    private ReservationState reservationState; //예약상태
 
-    private Long adminId; //매장관리자회원ID
+    private String rmkDc; //비고
 
     @CreatedDate
     private LocalDateTime createdAt;

@@ -24,21 +24,20 @@ import java.util.stream.Collectors;
 public class MemberEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; //회원ID
 
     @Column(nullable = false)
-    private String username;
+    private String username; //회원명
 
     @Column(nullable = false)
-    private String password;
+    private String password; //비밀번호
 
     @Column(nullable = false)
-    private String phoneNumber;
+    private String phoneNumber; //전화번호
 
-    @Column(nullable = false)
-    private String userFgCd;  //  사용자 구분(A:관리자, U:사용자)
+    private String userFgCd;  //사용자 구분(OWNER:상점관리자, USER:사용자)
 
-    private List<String> roles;
+    private List<String> roles; //권한
 
     @CreatedDate
     private LocalDateTime createdAt;

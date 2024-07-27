@@ -32,14 +32,14 @@ public class MarketService {
     }
 
     @Transactional
-    public void createMarket(Market market){
+    public MarketEntity createMarket(Market market){
         logger.info("started to create market");
 
         // adminId 가 유효한 아이디인지 체크
         MemberEntity member = memberRepository.findById(market.getAdminId())
-                .orElseThrow(()-> new RuntimeException("관리자 정보를 찾을 수 없습니다. "));
+                .orElseThrow(() -> new RuntimeException("관리자 정보를 찾을 수 없습니다. "));
 
-        if (!"A".equals(member.getUserFgCd())) {
+        if (!"OWNER".equals(member.getUserFgCd())) {
             throw new RuntimeException("매장 파트너 회원의 경우에만 상점등록 가능합니다.");
         }
 
@@ -48,11 +48,11 @@ public class MarketService {
         newMarket.setName(market.getName());
         newMarket.setLocation(market.getLocation());
         newMarket.setDescription(market.getDescription());
-        newMarket.setDeleteYn("N");
         newMarket.setAdminId(member.getId());
 //        newMarket.setAdminId(member);
         marketRepository.save(newMarket);
         logger.info("end to create market");
+        return newMarket;
 
     }
 
@@ -65,10 +65,7 @@ public class MarketService {
                 .orElseThrow(()-> new RuntimeException("관리자 정보를 찾을 수 없습니다. "));
 
         MarketEntity updateMarket = marketRepository.findById(market.getId())
-                .orElseThrow(()-> new RuntimeException("기존에 등록되지 않은 상점정보 입니다. "));
-        if("Y".equals(updateMarket.getDeleteYn())) {
-            throw new RuntimeException("삭제된 상점은 수정 불가능합니다. ");
-        }
+                .orElseThrow(()-> new RuntimeException("미등록 혹은 이미 삭제 처리된 상점정보 입니다. "));
 
         updateMarket.setName(market.getName());
         updateMarket.setLocation(market.getLocation());

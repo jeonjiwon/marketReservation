@@ -18,4 +18,7 @@ public interface MarketRepository extends JpaRepository<MarketEntity, Long> {
 
     // 거리로 오름차순 정렬
     List<MarketEntity> findAllByOrderByLocationAsc();
+
+    Optional<MarketEntity> findByAdminId(Long adminId);
+
 }
