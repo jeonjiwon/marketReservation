@@ -28,7 +28,9 @@ public class MarketEntity {
 
     private String description; //설명
 
-    private Long rating; //상점 평균 별점
+    private Double rating; //상점 평균 별점
+
+    private Long ratingCount; // 상점 리뷰 작성 수
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "adminId", nullable = false)
@@ -41,4 +43,13 @@ public class MarketEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    public void addAverRating(Double rating, Long ratingCount) {
+        this.ratingCount = ratingCount + 1;
+        this.rating = (this.rating * ratingCount + rating) / (double)this.ratingCount;
+    }
+
+    public void deleteAverRating(Double rating, Long ratingCount) {
+        this.ratingCount = ratingCount - 1;
+        this.rating = (Double)(this.rating * ratingCount - rating) / this.ratingCount;
+    }
 }

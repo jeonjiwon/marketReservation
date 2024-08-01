@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
@@ -29,12 +31,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorizeRequestsConfigurer ->
                         authorizeRequestsConfigurer
                                 .requestMatchers(
-                                        "/auth/signup", "/auth/signin",
-                                        "/create/market","/update/market", "/delete/market", "/read/market", "/read/marketDetail",
-                                        "/read/reservation", "/create/reservation", "/cancel/reservation",
-                                        "/create/review", "/update/review", "/delete/review"
+                                        "/auth/signup", "/auth/signin"
+                                        , "/read/market", "/read/marketDetail"
+                                        , "/update/arrivedCheck"
+//                                        ,"/create/market","/update/market", "/delete/market",
+//                                        "/read/reservation", "/create/reservation", "/cancel/reservation",
+//                                        "/create/review", "/update/review", "/delete/review"
                                 ).permitAll()
-//                                .requestMatchers("/**/signup", "/**/signin").permitAll()  // 회원가입 및 로그인 엔드포인트는 인증 없이 접근 허용
+//                                .requestMatchers("/**/signup", "/**/signin").permitAll()  // 회원가입 및 로그인시 인증 없이 접근 허용
                                 .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
                 )
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);  // JWT 인증 필터 추가

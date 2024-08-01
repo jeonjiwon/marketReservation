@@ -21,4 +21,5 @@ public interface MarketRepository extends JpaRepository<MarketEntity, Long> {
 
     Optional<MarketEntity> findByAdminId(Long adminId);
 
+    boolean existsByAdminId(Long adminId);
 }

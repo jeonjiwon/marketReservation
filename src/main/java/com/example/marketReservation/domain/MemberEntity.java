@@ -35,9 +35,7 @@ public class MemberEntity implements UserDetails {
     @Column(nullable = false)
     private String phoneNumber; //전화번호
 
-    private String userFgCd;  //사용자 구분(OWNER:상점관리자, USER:사용자)
-
-    private List<String> roles; //권한
+    private List<String> roles; //권한(매장 등록 시 사용-관리자/고객)
 
     @CreatedDate
     private LocalDateTime createdAt;
