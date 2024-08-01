@@ -3,6 +3,7 @@ package com.example.marketReservation.controller;
 import com.example.marketReservation.model.Market;
 import com.example.marketReservation.service.MarketService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class MarketController {
      */
     @Transactional
     @PostMapping("/create/market")
+    @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> createMarket(@RequestBody Market market) {
         var result = this.marketService.createMarket(market);
         return ResponseEntity.ok(result);
@@ -35,6 +37,7 @@ public class MarketController {
      */
     @Transactional
     @PutMapping("/update/market")
+    @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> updateMarket(@RequestBody Market market) {
         var result = this.marketService.updateMarket(market);
         return ResponseEntity.ok(result);
@@ -46,6 +49,7 @@ public class MarketController {
      */
     @Transactional
     @DeleteMapping("/delete/market")
+    @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> deleteMarket(@RequestParam("id") Long id) {
         var result = this.marketService.deleteMarket(id);
         return ResponseEntity.ok(result);
@@ -53,7 +57,7 @@ public class MarketController {
 
 
     /*
-     * [고객] 매장 검색
+     * [고객-전체접근허용] 매장 검색
      * - 가나다순, 별점순, 거리순
      */
     @Transactional(readOnly = true)
@@ -64,7 +68,7 @@ public class MarketController {
     }
 
     /*
-     * [고객] 매장 상세 조회
+     * [고객-전체접근허용] 매장 상세 조회
      */
     @Transactional(readOnly = true)
     @GetMapping("/read/marketDetail")

@@ -3,6 +3,7 @@ package com.example.marketReservation.controller;
 import com.example.marketReservation.model.Reservation;
 import com.example.marketReservation.service.ReservationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class ReservationController {
      */
     @Transactional(readOnly = true)
     @GetMapping("/read/reservation")
+    @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> readReservation(
             @RequestParam("searchDate") String searchDate,
             @RequestParam("id") Long id) {
@@ -37,8 +39,9 @@ public class ReservationController {
      */
     @Transactional
     @PostMapping("/create/reservation")
+    @PreAuthorize("hasRole('READ')")
     public ResponseEntity<?> createReservation(@RequestBody Reservation reservation) {
-       var result = this.reservationService.createReservation(reservation);
+        var result = this.reservationService.createReservation(reservation);
         return ResponseEntity.ok(result);
     }
 
@@ -48,13 +51,32 @@ public class ReservationController {
      */
     @Transactional
     @GetMapping("/cancel/reservation")
+    @PreAuthorize("hasRole('READ')")
     public ResponseEntity<?> cancelReservation(@RequestParam("id") Long id) {
         var result = this.reservationService.cancelReservation(id);
         return ResponseEntity.ok(result);
     }
 
     /*
-    * 키오스크 통해 전달 받은 고객 도착 확인 기능
-    */
+     * [전체접근허용] 키오스크 통해 전달 받은 고객 도착 확인 기능 <- 키오스크에서 인터페이스 받는 다고 가정
+     */
+    @Transactional
+    @PutMapping("/update/arrivedCheck")
+    public ResponseEntity<?> arrivedCheck(@RequestParam("id") Long id) {
+        var result = this.reservationService.arrivedCheck(id);
+        return ResponseEntity.ok(result);
+    }
 
+    /*
+     * [관리자] 예약 승인/거절 기능
+     */
+    @Transactional
+    @PutMapping("/update/reservationState")
+    @PreAuthorize("hasRole('WRITE')")
+    public ResponseEntity<?> reservationState(
+            @RequestParam("id") Long id,
+            @RequestParam("appYn") boolean appYn) {
+        var result = this.reservationService.reservationState(id, appYn);
+        return ResponseEntity.ok(result);
+    }
 }

@@ -39,8 +39,9 @@ public class MarketService {
         MemberEntity member = memberRepository.findById(market.getAdminId())
                 .orElseThrow(() -> new RuntimeException("관리자 정보를 찾을 수 없습니다. "));
 
-        if (!"OWNER".equals(member.getUserFgCd())) {
-            throw new RuntimeException("매장 파트너 회원의 경우에만 상점등록 가능합니다.");
+        // 해당 계정으로 이미 등록된 상점 내역이 있다면 불가능 (계정 1개당 매장 1개씩 관리하도록 처리)
+        if(marketRepository.existsByAdminId(member.getId())){
+            throw new RuntimeException("이미 타 상점 관리자입니다. ");
         }
 
         // 저장
@@ -50,6 +51,8 @@ public class MarketService {
         newMarket.setDescription(market.getDescription());
         newMarket.setAdminId(member.getId());
 //        newMarket.setAdminId(member);
+        newMarket.setRating(0.0);
+        newMarket.setRatingCount(0L);
         marketRepository.save(newMarket);
         logger.info("end to create market");
         return newMarket;

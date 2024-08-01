@@ -29,7 +29,7 @@ public class ReviewEntity {
 
     private String content; //내용
 
-    private Long rating; //별점
+    private Double rating; //별점
 
     @CreatedDate
     private LocalDateTime createdAt;

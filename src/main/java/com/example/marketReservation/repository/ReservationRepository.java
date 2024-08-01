@@ -17,9 +17,11 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             Long storeId
     );
 
-    boolean existsByReservationDtBetween(
+    boolean existsByReservationDtBetweenAndStoreIdAndReservationStateIn(
             LocalDateTime startOfDay,
-            LocalDateTime endOfDay
+            LocalDateTime endOfDay,
+            Long storeId,
+            List<Integer> reservationStates
     );
 
     boolean existsByStoreIdAndReservationStateIn(

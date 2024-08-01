@@ -79,7 +79,7 @@ public class TokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            System.out.println("여기서 오류 발생 ");
+            System.out.println("토큰 정보 오류 발생");
             // TODO
             return e.getClaims();
         }

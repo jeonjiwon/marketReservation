@@ -4,7 +4,6 @@ import com.example.marketReservation.MarketReservationApplication;
 import com.example.marketReservation.domain.MarketEntity;
 import com.example.marketReservation.domain.MemberEntity;
 import com.example.marketReservation.domain.ReservationEntity;
-import com.example.marketReservation.model.Market;
 import com.example.marketReservation.model.Reservation;
 import com.example.marketReservation.repository.MarketRepository;
 import com.example.marketReservation.repository.MemberRepository;
@@ -74,13 +73,17 @@ public class ReservationService {
         MarketEntity market = marketRepository.findById(reservation.getStoreId())
                 .orElseThrow(()-> new RuntimeException("해당 상점을 찾을 수 없습니다. "));
 
-        // 해당 일자에 예약이 가능한지 체크
-        LocalDate date = reservation.getReservationDt().toLocalDate();
-        LocalDateTime startOfDay = date.atStartOfDay(); // 날짜의 시작 (00:00:00)
-        LocalDateTime endOfDay = date.atTime(LocalTime.MAX); // 날짜의 끝 (23:59:59.999999999)
-        boolean exists = reservationRepository.existsByReservationDtBetween(
-                startOfDay,
-                endOfDay
+        List<Integer> reservationStates = new ArrayList<>();
+        reservationStates.add(0); //예약요청
+        reservationStates.add(1); //도착
+        reservationStates.add(2); //완료
+        reservationStates.add(5); //승인
+
+        boolean exists = reservationRepository.existsByReservationDtBetweenAndStoreIdAndReservationStateIn(
+                reservation.getReservationDt(),
+                reservation.getReservationDt(),
+                market.getId(),
+                reservationStates
         );
         if(exists) {
             throw new RuntimeException("해당 일정은 이미 예약등록 마감되었습니다. ");
@@ -106,9 +109,46 @@ public class ReservationService {
         ReservationEntity reservation = reservationRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("존재하지 않는 예약번호 입니다."));
 
+        if(reservation.getReservationState() != ReservationState.REQUESTED ) {
+            throw new RuntimeException("예약 요청 상태에서만 취소 가능합니다. ");
+        }
+
         reservation.setReservationState(ReservationState.CANCELED);
         reservationRepository.save(reservation);
         logger.info("end to cancel reservation");
+        return reservation;
+    }
+
+    @Transactional
+    public ReservationEntity arrivedCheck(Long id){
+        logger.info("started to arrived check");
+        ReservationEntity reservation = reservationRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("존재하지 않는 예약번호 입니다."));
+
+        if(reservation.getReservationState() != ReservationState.APPROVAL) {
+            throw new RuntimeException("매장 승인 후 도착확인 처리 가능합니다. ");
+        }
+
+        reservation.setReservationState(ReservationState.ARRIVED);
+        reservationRepository.save(reservation);
+        logger.info("end to arrived check");
+        return reservation;
+    }
+
+    @Transactional
+    public ReservationEntity reservationState(Long id, boolean appYn){
+        logger.info("started to reservationState");
+        ReservationEntity reservation = reservationRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("존재하지 않는 예약번호 입니다."));
+
+        if(appYn) {
+            reservation.setReservationState(ReservationState.APPROVAL);
+        } else {
+            reservation.setReservationState(ReservationState.REJECT);
+        }
+
+        reservationRepository.save(reservation);
+        logger.info("end to reservationState");
         return reservation;
     }
 }

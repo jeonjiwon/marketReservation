@@ -19,7 +19,6 @@ public class Auth {
         private String username;
         private String password;
         private String phoneNumber;
-        private String userFgCd;
         private List<String> roles;
 
         public MemberEntity toEntity(){
@@ -27,7 +26,6 @@ public class Auth {
                     .username(this.username)
                     .password(this.password)
                     .phoneNumber(this.phoneNumber)
-                    .userFgCd(this.userFgCd)
                     .roles(this.roles)
                     .build();
         }
